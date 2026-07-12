@@ -35,12 +35,14 @@
 
 #if defined(SFML_SYSTEM_WINDOWS)
 #include <windns.h>
+#elif defined(SFML_SYSTEM_SWITCH)
+
 #else
-#include <arpa/inet.h>
 #include <arpa/nameser.h>
-#include <netdb.h>
 #include <resolv.h>
 #endif
+#include <arpa/inet.h>
+#include <netdb.h>
 
 #include <algorithm>
 #include <array>
@@ -138,7 +140,7 @@ std::unique_ptr<DNS_RECORDW, RecordsDeleter> getRecords(const std::string& hostn
 template <typename RecordHandler>
 void getRecords(const std::string& hostname, int type, const RecordHandler& recordHandler)
 {
-#if defined(SFML_SYSTEM_ANDROID)
+#if defined(SFML_SYSTEM_ANDROID) or defined (SFML_SYSTEM_SWITCH)
     // This implementation will not work on Android due to their
     // deliberate decision to implement their own dialect of the resolv API
     // The API we use here doesn't prevent building on Android but
@@ -149,7 +151,7 @@ void getRecords(const std::string& hostname, int type, const RecordHandler& reco
     // If the user wants to perform advanced DNS queries we currently
     // have to perform it ourselves using our own manual resolver
     assert(false && "Advanced DNS queries cannot be made through res_search");
-#endif
+#else
 
     std::array<unsigned char, NS_PACKETSZ> answer{};
 
@@ -173,6 +175,7 @@ void getRecords(const std::string& hostname, int type, const RecordHandler& reco
 
         recordHandler(handle, record);
     }
+#endif
 }
 #endif
 
@@ -609,6 +612,8 @@ std::vector<sf::String> Dns::queryNs(const String& hostname, const std::vector<I
         if ((ptr->wType == DNS_TYPE_NS) && (ptr->Data.NS.pNameHost != nullptr))
             nsRecords.emplace_back(decodeHostname(sf::String(ptr->Data.NS.pNameHost).toAnsiString()));
     }
+#elif defined(SFML_SYSTEM_SWITCH)
+    printf("I don't want to be here anymore. Dns::queryNS? Why are you even trying to use that?");
 #else
     getRecords(encoded,
                ns_t_ns,
@@ -684,6 +689,8 @@ std::vector<Dns::MxRecord> Dns::queryMx(const String& hostname, const std::vecto
                 MxRecord{decodeHostname(sf::String(ptr->Data.MX.pNameExchange).toAnsiString()), ptr->Data.MX.wPreference});
         }
     }
+#elif defined(SFML_SYSTEM_SWITCH)
+    printf("I don't want to be here anymore. Dns::queryMx? Why are you even trying to use that?");
 #else
     getRecords(encoded,
                ns_t_mx,
@@ -765,6 +772,8 @@ std::vector<Dns::SrvRecord> Dns::querySrv(const String& hostname, const std::vec
                                               ptr->Data.SRV.wPriority});
         }
     }
+#elif defined(SFML_SYSTEM_SWITCH)
+    printf("I don't want to be here anymore. Dns::querySrv? Why are you even trying to use that?");
 #else
     getRecords(encoded,
                ns_t_srv,
@@ -861,6 +870,8 @@ std::vector<std::vector<sf::String>> Dns::queryTxt(const String&                
             }
         }
     }
+#elif defined(SFML_SYSTEM_SWITCH)
+    printf("I don't want to be here anymore. Dns::queryTxt? Why are you even trying to use that?");
 #else
     getRecords(encoded,
                ns_t_txt,
