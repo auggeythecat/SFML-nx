@@ -53,7 +53,7 @@ FileInputStream::FileInputStream() = default;
 FileInputStream::FileInputStream(const std::filesystem::path& filename)
 {
     if (!open(filename))
-        throw Exception("Failed to open file input stream");
+        printf("Failed to open file input stream");
 }
 
 

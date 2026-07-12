@@ -26,10 +26,10 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Window/WindowStyle.hpp> // important to be included first (conflict with None)
+// #include <SFML/Window/WindowStyle.hpp> // important to be included first (conflict with None)
 #include <SFML/Window/Switch/WindowImplSwitch.hpp>
 #include <SFML/Window/Event.hpp>
-#include <SFML/System/Lock.hpp>
+// #include <SFML/System/Lock.hpp>
 #include <SFML/System/Err.hpp>
 #include <switch.h>
 
@@ -51,7 +51,7 @@ WindowImplSwitch::WindowImplSwitch(WindowHandle handle)
 
 
 ////////////////////////////////////////////////////////////
-WindowImplSwitch::WindowImplSwitch(VideoMode mode, const String& title, unsigned long style, const ContextSettings& settings)
+WindowImplSwitch::WindowImplSwitch(VideoMode mode, const String& title, std::uint32_t style, State state, const ContextSettings& settings)
 {
     singleInstance = this;
 
@@ -75,7 +75,7 @@ WindowImplSwitch::~WindowImplSwitch()
 
 
 ////////////////////////////////////////////////////////////
-WindowHandle WindowImplSwitch::getSystemHandle() const
+[[nodiscard]] WindowHandle WindowImplSwitch::getNativeHandle() const
 {
     return (WindowHandle) &m_window;
 }
@@ -85,7 +85,7 @@ WindowHandle WindowImplSwitch::getSystemHandle() const
 void WindowImplSwitch::processEvents()
 {
     appletMainLoop();
-    processTouchscreenEvent();
+    // processTouchscreenEvent();
 }
 
 
@@ -98,7 +98,7 @@ Vector2i WindowImplSwitch::getPosition() const
 
 
 ////////////////////////////////////////////////////////////
-void WindowImplSwitch::setPosition(const Vector2i& position)
+void WindowImplSwitch::setPosition(const Vector2i position)
 {
     // Not applicable
 }
@@ -113,7 +113,7 @@ Vector2u WindowImplSwitch::getSize() const
 
 
 ////////////////////////////////////////////////////////////
-void WindowImplSwitch::setSize(const Vector2u& size)
+void WindowImplSwitch::setSize(const Vector2u size)
 {
     // N/A
 }
@@ -127,7 +127,7 @@ void WindowImplSwitch::setTitle(const String& title)
 
 
 ////////////////////////////////////////////////////////////
-void WindowImplSwitch::setIcon(unsigned int width, unsigned int height, const Uint8* pixels)
+void WindowImplSwitch::setIcon(Vector2u size, const std::uint8_t* pixels)
 {
     // Not applicable
 }
@@ -187,6 +187,7 @@ void WindowImplSwitch::forwardEvent(const Event& event)
     WindowImplSwitch::singleInstance->pushEvent(event);
 }
 
+/*
 void WindowImplSwitch::processTouchscreenEvent()
 {
     static HidTouchScreenState previous_state = {0};
@@ -236,7 +237,7 @@ void WindowImplSwitch::processTouchscreenEvent()
         previous_state = state;
     }
 }
-
+*/
 
 } // namespace priv
 } // namespace sf

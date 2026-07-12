@@ -85,17 +85,16 @@ using WindowImplType = sf::priv::WindowImplUIKit;
 #elif defined(SFML_SYSTEM_ANDROID)
 
 #include <SFML/Window/Android/WindowImplAndroid.hpp>
-using WindowImplType = sf::priv::WindowImplAndroid;
 
 #define SFML_VULKAN_IMPLEMENTATION_NOT_AVAILABLE
 
 
 #elif defined(SFML_SYSTEM_SWITCH)
-    #include <SFML/Window/Switch/WindowImplSwitch.hpp>
+#include <SFML/Window/Switch/WindowImplSwitch.hpp>
 
-    typedef sf::priv::WindowImplSwitch WindowImplType;
+using WindowImplType = sf::priv::WindowImplSwitch;
 
-    #define SFML_VULKAN_IMPLEMENTATION_NOT_AVAILABLE
+#define SFML_VULKAN_IMPLEMENTATION_NOT_AVAILABLE
 
 #endif
 

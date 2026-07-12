@@ -25,7 +25,7 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/System/Lock.hpp>
+// #include <SFML/System/Lock.hpp>
 #include <SFML/System/Err.hpp>
 #include <SFML/Window/InputImpl.hpp>
 #include "switch.h"
@@ -74,14 +74,14 @@ Vector2i InputImpl::getMousePosition(const WindowBase& relativeTo)
 
 
 ////////////////////////////////////////////////////////////
-void InputImpl::setMousePosition(const Vector2i& position)
+void InputImpl::setMousePosition(Vector2i position)
 {
     // Injecting events is impossible on Android
 }
 
 
 ////////////////////////////////////////////////////////////
-void InputImpl::setMousePosition(const Vector2i& position, const WindowBase& relativeTo)
+void InputImpl::setMousePosition(Vector2i position, const WindowBase& relativeTo)
 {
     // Not implemented
 }

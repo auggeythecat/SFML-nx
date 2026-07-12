@@ -131,8 +131,8 @@ JoystickCaps JoystickImpl::getCapabilities() const
     // To implement
     JoystickCaps caps = JoystickCaps();
     caps.buttonCount = NUM_KEYS_BY_INDEX;
-    caps.axes[Joystick::X] = true;
-    caps.axes[Joystick::Y] = true;
+    caps.axes[Joystick::Axis::X] = true;
+    caps.axes[Joystick::Axis::Y] = true;
     return caps;
 }
 
@@ -160,10 +160,10 @@ JoystickState JoystickImpl::update()
 
     HidAnalogStickState left = padGetStickPos(&m_state, JOYSTICK_LEFT);
     HidAnalogStickState right = padGetStickPos(&m_state, JOYSTICK_RIGHT);
-    sfmlState.axes[Joystick::X] = left.x;
-    sfmlState.axes[Joystick::Y] = left.y;
-    sfmlState.axes[Joystick::U] = right.x;
-    sfmlState.axes[Joystick::V] = right.y;
+    sfmlState.axes[Joystick::Axis::X] = left.x;
+    sfmlState.axes[Joystick::Axis::Y] = left.y;
+    sfmlState.axes[Joystick::Axis::U] = right.x;
+    sfmlState.axes[Joystick::Axis::V] = right.y;
     // To implement
     return sfmlState;
 }

@@ -31,7 +31,11 @@
 
 #include <SFML/System/Err.hpp>
 
-#include <glad/gl.h>
+#if defined(SFML_SYSTEM_SWITCH)
+#include <GL/gl.h>
+#else
+#include <glad/egl.h>
+#endif
 
 #include <algorithm>
 #include <atomic>
@@ -103,7 +107,7 @@ using ContextType = sf::priv::EglContext;
 
 #elif defined(SFML_SYSTEM_SWITCH)
 
-#include <SFML/Window/Switch/ //TODO:>
+#include <SFML/Window/EglContext.hpp>
 using ContextType = sf::priv::EglContext;
 
 #endif

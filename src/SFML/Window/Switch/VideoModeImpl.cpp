@@ -48,7 +48,7 @@ VideoMode VideoModeImpl::getDesktopMode()
     NWindow* window = nwindowGetDefault();
     u32 width, height;
     nwindowGetDimensions(window, &width, &height);
-    return VideoMode(width, height);
+    return VideoMode({ width, height });
 }
 
 } // namespace priv
