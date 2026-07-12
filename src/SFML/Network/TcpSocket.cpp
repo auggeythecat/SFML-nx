@@ -274,10 +274,13 @@ bool loadSystemCertificates([[maybe_unused]] mbedtls_x509_crt* x509crt, [[maybe_
 // When building MbedTLS ourselves, it doesn't provide its own built-in cross-platform mutex implementation
 // Instead it delegates mutex management to our code with the use of the following callbacks
 // We just provide wrapper functions around std::mutex
+#if defined(SFML_SYSTEM_SWITCH)
+
+#else
 #if !defined(MBEDTLS_THREADING_C)
 #error "Mbed TLS not built with threading support however it is required"
 #endif
-
+#endif
 struct MbedTlsThreading
 {
 #if defined(MBEDTLS_THREADING_ALT)
@@ -335,9 +338,13 @@ struct MbedTlsThreading
     {
         mbedtls_threading_free_alt();
     }
+
+#if defined(SFML_SYSTEM_SWITCH)
+
 #else
 #if !defined(MBEDTLS_THREADING_PTHREAD)
 #error "No Mbed TLS threading implementation available"
+#endif
 #endif
 #endif
 };
