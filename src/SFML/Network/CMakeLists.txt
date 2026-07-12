@@ -58,7 +58,7 @@ endif()
 
 if(SFML_USE_SYSTEM_DEPS)
     find_package(MbedTLS REQUIRED)
-    find_package(Libssh2 REQUIRED)
+#    find_package(Libssh2 REQUIRED)
 else()
     include(FetchContent)
 

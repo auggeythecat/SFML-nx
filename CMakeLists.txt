@@ -114,6 +114,7 @@ if(SFML_OS_SWITCH)
     find_package(LibOpenAL REQUIRED)
     find_package(LibOpenGL REQUIRED)
     find_package(LibVorbis REQUIRED)
+    find_package(Libssh2 REQUIRED)
 
     set (SFML_OPENGL_ES true)
 
