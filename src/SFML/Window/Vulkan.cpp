@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2019 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2026 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -27,15 +27,24 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/Vulkan.hpp>
 
+#include <cassert>
+
 #if defined(SFML_SYSTEM_WINDOWS)
 
-#include <SFML/Window/Win32/VulkanImplWin32.hpp>
-typedef sf::priv::VulkanImplWin32 VulkanImplType;
+#include <SFML/Window/VulkanImpl.hpp>
 
-#elif defined(SFML_SYSTEM_LINUX) || defined(SFML_SYSTEM_FREEBSD) || defined(SFML_SYSTEM_OPENBSD)
+#elif defined(SFML_SYSTEM_LINUX) || defined(SFML_SYSTEM_FREEBSD) || defined(SFML_SYSTEM_OPENBSD) || \
+    defined(SFML_SYSTEM_NETBSD)
 
-#include <SFML/Window/Unix/VulkanImplX11.hpp>
-typedef sf::priv::VulkanImplX11 VulkanImplType;
+#if defined(SFML_USE_DRM)
+
+#define SFML_VULKAN_IMPLEMENTATION_NOT_AVAILABLE
+
+#else
+
+#include <SFML/Window/VulkanImpl.hpp>
+
+#endif
 
 #else
 
@@ -44,10 +53,10 @@ typedef sf::priv::VulkanImplX11 VulkanImplType;
 #endif
 
 
-namespace sf
+namespace sf::Vulkan
 {
 ////////////////////////////////////////////////////////////
-bool Vulkan::isAvailable(bool requireGraphics)
+bool isAvailable([[maybe_unused]] bool requireGraphics)
 {
 #if defined(SFML_VULKAN_IMPLEMENTATION_NOT_AVAILABLE)
 
@@ -55,29 +64,31 @@ bool Vulkan::isAvailable(bool requireGraphics)
 
 #else
 
-    return VulkanImplType::isAvailable(requireGraphics);
+    return priv::VulkanImpl::isAvailable(requireGraphics);
 
 #endif
 }
 
 
 ////////////////////////////////////////////////////////////
-VulkanFunctionPointer Vulkan::getFunction(const char* name)
+VulkanFunctionPointer getFunction([[maybe_unused]] const char* name)
 {
+    assert(name && "Name cannot be a null pointer");
+
 #if defined(SFML_VULKAN_IMPLEMENTATION_NOT_AVAILABLE)
 
-    return NULL;
+    return nullptr;
 
 #else
 
-    return VulkanImplType::getFunction(name);
+    return priv::VulkanImpl::getFunction(name);
 
 #endif
 }
 
 
 ////////////////////////////////////////////////////////////
-const std::vector<const char*>& Vulkan::getGraphicsRequiredInstanceExtensions()
+const std::vector<const char*>& getGraphicsRequiredInstanceExtensions()
 {
 #if defined(SFML_VULKAN_IMPLEMENTATION_NOT_AVAILABLE)
 
@@ -87,9 +98,9 @@ const std::vector<const char*>& Vulkan::getGraphicsRequiredInstanceExtensions()
 
 #else
 
-    return VulkanImplType::getGraphicsRequiredInstanceExtensions();
+    return priv::VulkanImpl::getGraphicsRequiredInstanceExtensions();
 
 #endif
 }
 
-} // namespace sf
+} // namespace sf::Vulkan

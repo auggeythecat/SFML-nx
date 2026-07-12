@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2019 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2026 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -25,14 +25,20 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Window/iOS/SFView.hpp>
 #include <SFML/Window/iOS/SFAppDelegate.hpp>
+#include <SFML/Window/iOS/SFView.hpp>
+
 #include <SFML/System/Utf.hpp>
+
 #include <QuartzCore/CAEAGLLayer.h>
+
 #include <cstring>
 
-@interface SFView()
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
 
+@interface SFView ()
+
+// NOLINTNEXTLINE(readability-identifier-naming)
 @property (nonatomic) NSMutableArray* touches;
 
 @end
@@ -44,7 +50,7 @@
 
 
 ////////////////////////////////////////////////////////////
--(BOOL)canBecomeFirstResponder
+- (BOOL)canBecomeFirstResponder
 {
     return true;
 }
@@ -74,8 +80,8 @@
     const char* end = utf8 + std::strlen(utf8);
     while (utf8 < end)
     {
-        sf::Uint32 character;
-        utf8 = sf::Utf8::decode(utf8, end, character);
+        char32_t character = 0;
+        utf8               = sf::Utf8::decode(utf8, end, character);
         [[SFAppDelegate getInstance] notifyCharacter:character];
     }
 }
@@ -84,7 +90,7 @@
 ////////////////////////////////////////////////////////////
 - (void)touchesBegan:(NSSet*)touches withEvent:(UIEvent*)event
 {
-    for (UITouch* touch in touches)
+    for (UITouch* touch in touches) // NOLINT(cppcoreguidelines-init-variables)
     {
         // find an empty slot for the new touch
         NSUInteger index = [self.touches indexOfObject:[NSNull null]];
@@ -99,11 +105,11 @@
         }
 
         // get the touch position
-        CGPoint point = [touch locationInView:self];
+        CGPoint      point = [touch locationInView:self];
         sf::Vector2i position(static_cast<int>(point.x), static_cast<int>(point.y));
 
         // notify the application delegate
-        [[SFAppDelegate getInstance] notifyTouchBegin:index atPosition:position];
+        [[SFAppDelegate getInstance] notifyTouchBegin:(static_cast<unsigned int>(index)) atPosition:position];
     }
 }
 
@@ -111,18 +117,18 @@
 ////////////////////////////////////////////////////////////
 - (void)touchesMoved:(NSSet*)touches withEvent:(UIEvent*)event
 {
-    for (UITouch* touch in touches)
+    for (UITouch* touch in touches) // NOLINT(cppcoreguidelines-init-variables)
     {
         // find the touch
         NSUInteger index = [self.touches indexOfObject:touch];
         if (index != NSNotFound)
         {
             // get the touch position
-            CGPoint point = [touch locationInView:self];
+            CGPoint      point = [touch locationInView:self];
             sf::Vector2i position(static_cast<int>(point.x), static_cast<int>(point.y));
 
             // notify the application delegate
-            [[SFAppDelegate getInstance] notifyTouchMove:index atPosition:position];
+            [[SFAppDelegate getInstance] notifyTouchMove:(static_cast<unsigned int>(index)) atPosition:position];
         }
     }
 }
@@ -131,18 +137,18 @@
 ////////////////////////////////////////////////////////////
 - (void)touchesEnded:(NSSet*)touches withEvent:(UIEvent*)event
 {
-    for (UITouch* touch in touches)
+    for (UITouch* touch in touches) // NOLINT(cppcoreguidelines-init-variables)
     {
         // find the touch
         NSUInteger index = [self.touches indexOfObject:touch];
         if (index != NSNotFound)
         {
             // get the touch position
-            CGPoint point = [touch locationInView:self];
+            CGPoint      point = [touch locationInView:self];
             sf::Vector2i position(static_cast<int>(point.x), static_cast<int>(point.y));
 
             // notify the application delegate
-            [[SFAppDelegate getInstance] notifyTouchEnd:index atPosition:position];
+            [[SFAppDelegate getInstance] notifyTouchEnd:(static_cast<unsigned int>(index)) atPosition:position];
 
             // remove the touch
             [self.touches replaceObjectAtIndex:index withObject:[NSNull null]];
@@ -183,27 +189,29 @@
 
     if (self)
     {
-        self.context = NULL;
+        self.context = nullptr;
         self.touches = [NSMutableArray array];
 
         // Configure the EAGL layer
-        CAEAGLLayer* eaglLayer = (CAEAGLLayer*)self.layer;
-        eaglLayer.opaque = YES;
-        eaglLayer.drawableProperties = [NSDictionary dictionaryWithObjectsAndKeys:
-                                        [NSNumber numberWithBool:FALSE], kEAGLDrawablePropertyRetainedBacking,
-                                        kEAGLColorFormatRGBA8, kEAGLDrawablePropertyColorFormat,
-                                        nil];
+        auto* eaglLayer              = static_cast<CAEAGLLayer*>(self.layer);
+        eaglLayer.opaque             = YES;
+        eaglLayer.drawableProperties = [NSDictionary
+            dictionaryWithObjectsAndKeys:[NSNumber numberWithBool:FALSE],
+                                         kEAGLDrawablePropertyRetainedBacking,
+                                         kEAGLColorFormatRGBA8,
+                                         kEAGLDrawablePropertyColorFormat,
+                                         nil];
 
         // Enable user interactions on the view (multi-touch events)
         self.userInteractionEnabled = true;
-        self.multipleTouchEnabled = true;
+        self.multipleTouchEnabled   = true;
     }
 
     return self;
 }
 
 ////////////////////////////////////////////////////////////
-- (UITextAutocorrectionType) autocorrectionType
+- (UITextAutocorrectionType)autocorrectionType
 {
     return UITextAutocorrectionTypeNo;
 }

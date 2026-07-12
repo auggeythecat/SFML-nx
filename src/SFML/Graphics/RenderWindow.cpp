@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2019 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2026 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -25,10 +25,13 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Graphics/RenderWindow.hpp>
-#include <SFML/Graphics/Texture.hpp>
 #include <SFML/Graphics/GLCheck.hpp>
+#include <SFML/Graphics/GLExtensions.hpp>
+#include <SFML/Graphics/Image.hpp>
 #include <SFML/Graphics/RenderTextureImplFBO.hpp>
+#include <SFML/Graphics/RenderWindow.hpp>
+
+#include <SFML/Window/VideoMode.hpp>
 
 #include <switch.h>
 
@@ -36,35 +39,26 @@
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-RenderWindow::RenderWindow() :
-m_defaultFrameBuffer(0)
-{
-    // Nothing to do
-}
-
-
-////////////////////////////////////////////////////////////
-RenderWindow::RenderWindow(VideoMode mode, const String& title, Uint32 style, const ContextSettings& settings) :
-m_defaultFrameBuffer(0)
+RenderWindow::RenderWindow(VideoMode mode, const String& title, std::uint32_t style, State state, const ContextSettings& settings)
 {
     // Don't call the base class constructor because it contains virtual function calls
-    Window::create(mode, title, style, settings);
+    Window::create(mode, title, style, state, settings);
 }
 
 
 ////////////////////////////////////////////////////////////
-RenderWindow::RenderWindow(WindowHandle handle, const ContextSettings& settings) :
-m_defaultFrameBuffer(0)
+RenderWindow::RenderWindow(VideoMode mode, const String& title, State state, const ContextSettings& settings)
+{
+    // Don't call the base class constructor because it contains virtual function calls
+    Window::create(mode, title, sf::Style::Default, state, settings);
+}
+
+
+////////////////////////////////////////////////////////////
+RenderWindow::RenderWindow(WindowHandle handle, const ContextSettings& settings)
 {
     // Don't call the base class constructor because it contains virtual function calls
     Window::create(handle, settings);
-}
-
-
-////////////////////////////////////////////////////////////
-RenderWindow::~RenderWindow()
-{
-    // Nothing to do
 }
 
 
@@ -76,13 +70,27 @@ Vector2u RenderWindow::getSize() const
 
 
 ////////////////////////////////////////////////////////////
+void RenderWindow::setIcon(const Image& icon)
+{
+    setIcon(icon.getSize(), icon.getPixelsPtr());
+}
+
+
+////////////////////////////////////////////////////////////
+bool RenderWindow::isSrgb() const
+{
+    return getSettings().sRgbCapable;
+}
+
+
+////////////////////////////////////////////////////////////
 bool RenderWindow::setActive(bool active)
 {
     bool result = Window::setActive(active);
 
     // Update RenderTarget tracking
     if (result)
-        RenderTarget::setActive(active);
+        result = RenderTarget::setActive(active);
 
     // If FBOs are available, make sure none are bound when we
     // try to draw to the default framebuffer of the RenderWindow
@@ -94,19 +102,6 @@ bool RenderWindow::setActive(bool active)
     }
 
     return result;
-}
-
-
-////////////////////////////////////////////////////////////
-Image RenderWindow::capture() const
-{
-    Vector2u windowSize = getSize();
-
-    Texture texture;
-    texture.create(windowSize.x, windowSize.y);
-    texture.update(*this);
-
-    return texture.copyToImage();
 }
 
 
