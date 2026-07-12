@@ -96,16 +96,14 @@
 // NetBSD
 #define SFML_SYSTEM_NETBSD
 
-#elif defined(__SWITCH__)
-
-    #define SFML_SYSTEM_SWITCH
-
-#else
-
 // Unsupported UNIX system
 #error This UNIX operating system is not supported by SFML library
 
 #endif
+
+#elif defined(__SWITCH__)
+
+    #define SFML_SYSTEM_SWITCH
 
 #else
 
